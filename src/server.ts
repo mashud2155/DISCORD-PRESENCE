@@ -9,6 +9,14 @@ const PORT = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Resolve correct path to static frontend files in both dev (ts-node) and prod (compiled JS on Vercel)
+// - In dev: this file lives in src/, so public is at src/public
+// - In prod: this file is compiled to dist/, while public is still at src/public
+const publicPath =
+  process.env.NODE_ENV === "production"
+    ? join(__dirname, "../src/public")
+    : join(__dirname, "public");
+
 // Parents Discord IDs (Top row)
 const PARENT1_DISCORD_ID = process.env.PARENT1_ID || "1246520897439924316"; // Replace with parent 1 ID
 const PARENT2_DISCORD_ID = process.env.PARENT2_ID || "504309808984227842"; // Replace with parent 2 ID
@@ -246,7 +254,7 @@ connectToChild1Lanyard();
 connectToChild2Lanyard();
 connectToChild3Lanyard();
 
-app.use(express.static(join(__dirname, "public")));
+app.use(express.static(publicPath));
 
 app.get("/api/presence", (req, res) => {
   const familyTree = {
